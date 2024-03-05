@@ -22,7 +22,7 @@
 
 <details>
 <summary>코드</summary>
-```bash
+ 
 public class MapRequestManager : MonoBehaviour
 {
     [Header("네이버 API를 받기 위한 정보")]
@@ -110,7 +110,7 @@ public class MapRequestManager : MonoBehaviour
     }
 
 }
-```
+
 </details>
  
 ARCore Extension Package 사용법
