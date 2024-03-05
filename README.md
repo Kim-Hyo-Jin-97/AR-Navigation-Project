@@ -22,6 +22,7 @@
 
 <details>
 <summary>Translations:</summary>
+ 
  public class MapRequestManager : MonoBehaviour
 {
     [Header("네이버 API를 받기 위한 정보")]
@@ -58,7 +59,6 @@
 
     }
 
-
     private void Start()
     {
         StartCoroutine(MapAPIRequest());    //지도를 띄우고 마커생성을 요청하는 코루틴
@@ -67,13 +67,11 @@
     {
         yield return new WaitUntil(() => POI.datalist.Count > 0);   //POI 데이터를 받아올 때 까지 대기
 
-
         if (!gps.GetMyLocation(ref latitude, ref longitude))     //GPS를 받아올 수 있다면 위도, 경도를 현재 위치로 설정
         {
             latitude = 37.466480f;
             longitude = 126.657566f;     //그렇지 않다면 재물포역으로
         }
-
 
         POI.datalist.Add(new POIData(0, "-", "MyLocation", "-", latitude, longitude, "-", "-", "-"));   //마커 생성을 위해 현재위치 데이터를 POI에 추가
 
@@ -82,19 +80,14 @@
             markerInstantiate.MarkerMake(width, height, MapSizeLevel, latitude, longitude, POI.datalist[i]);
         }
 
-
-
         string APIrequestURL = mapBaseURL + $"?w={width}&h={height}&center={longitude},{latitude}&level={MapSizeLevel}"+
             $"&scale=2&format=png";     //지도 API를 받아오기 위한 요청
-
 
         UnityWebRequest req = UnityWebRequestTexture.GetTexture(APIrequestURL);     //요청한 API대로 지도 텍스처를 받아온다.
         req.SetRequestHeader("X-NCP-APIGW-API-KEY-ID", clientID);       //발급받은 ID
         req.SetRequestHeader("X-NCP-APIGW-API-KEY", clientPW);          //발급받은 PW
 
-
         yield return req.SendWebRequest();  //API요청
-
 
         MapImage.texture = DownloadHandlerTexture.GetContent(req);  //MapImage에 받아온 지도의 텍스처 입히기
 
@@ -105,9 +98,7 @@
             case UnityWebRequest.Result.ProtocolError: Debug.Log("Protocol Error"); yield break;
             case UnityWebRequest.Result.DataProcessingError: Debug.Log("DataProcessing Error"); yield break;
         }
-
     }
-
 
 }
 </details>
