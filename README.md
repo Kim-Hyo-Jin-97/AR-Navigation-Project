@@ -100,9 +100,9 @@ public class POI_Info : MonoBehaviour
 
     private void Awake()
     {
-        StartCoroutine(requestCoroutine()); // POI 요청 시작
+        StartCoroutine(requestGetPOI()); // POI 요청 시작
     }
-    IEnumerator requestCoroutine()  //인터넷에서 POI 데이터를 받아와 POI.datalist에 저장하는 메서드
+    IEnumerator requestGetPOI()  //인터넷에서 POI 데이터를 받아와 POI.datalist에 저장하는 메서드
     {
         UnityWebRequest WebData = UnityWebRequest.Get($"{POIwebURL}&{POIsheetName}&{POIrange}");
 
