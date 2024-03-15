@@ -353,7 +353,8 @@ OpenStreetMap에서는 확대 레벨이 1 오를 때마다 지도의 확대 수�
 
 **7.1 지도의 확대와 움직임**
 
-- 제작하고자 했던 앱은 네비게이션이니만큼 당연히 지도를 받아오고 나서 자유롭게 화면을 드래그하거나 확대/축소할 수 있어야 한다고 생각했습니다. 그러나 유니티에서 Dynamic Map을 사용할 수 없었기에 저는 간단하게 사용자의 입력값이 주어지면 그만큼 지도를 입힌 RawImage의 Transform을 변경하는 방식으로 구현했습니다.<br>
+- 제작하고자 했던 앱은 네비게이션이니만큼 당연히 지도를 받아오고 나서 자유롭게 화면을 드래그하거나 확대/축소할 수 있어야 한다고 생각했습니다.
+- 그러나 유니티에서 Dynamic Map을 사용할 수 없었기에 저는 간단하게 사용자의 입력값이 주어지면 그만큼 지도를 입힌 RawImage의 Transform을 변경하는 방식으로 구현했습니다.
 
 <details>
 <summary>최초 코드</summary>
@@ -458,8 +459,8 @@ public class MapTransformManager : MonoBehaviour
 </details>
 
 
-- 그러나 이 코드대로 동작시켜보았을 때 지도가 화면 밖으로 빠져나오거나, 지도를 드래그 한 상태에서 scale을 축소시 그만큼 Canvas의 빈 영역이 생기는 문제가 발생하였습니다.<br>
-그래서 저는 이 문제를 해결하기 위해 지도RawImage의 앵커를 Canvas의 각 꼭짓점으로 설정하고, SCreen.width(height) *  rawImage의 scale.x(y)의 값을 받아  Mathf.clamp함수를 사용하여 rawImage의 anchoredPosition을 이 범위 내로 한정시키는 것으로 해결할 수 있었습니다.
+- 그러나 이 코드대로 동작시켜보았을 때 지도가 화면 밖으로 빠져나오거나, 지도를 드래그 한 상태에서 scale을 축소시 그만큼 Canvas의 빈 영역이 생기는 문제가 발생하였습니다.
+- 그래서 저는 이 문제를 해결하기 위해 RawImage의 앵커를 Canvas의 각 꼭짓점으로 설정하고, Screen.width(height) *  rawImage의 scale.x(y)의 값을 받아 Mathf.clamp함수를 사용하여 rawImage의 anchoredPosition을 이 범위 내로 한정시키는 것으로 해결할 수 있었습니다.
 
 
 <details>
