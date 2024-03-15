@@ -1,6 +1,6 @@
 # AR-Navigation-Project(Station J)
 
-경기 인력개발원 유니티 부트캠프에서AR 네비게이션 제작 팀 프로젝트 Statin J: <https://github.com/Unity-Team-Unreal/AR-nav.git>
+경기 인력개발원 유니티 부트캠프에서AR 네비게이션 제작 팀 프로젝트 [Statin J](https://github.com/Unity-Team-Unreal/AR-nav.git)
 
 # 1. 프로젝트 개요
 
