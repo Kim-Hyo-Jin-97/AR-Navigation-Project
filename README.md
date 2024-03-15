@@ -319,10 +319,6 @@ public class MapRequestManager : MonoBehaviour
 </details>
 
 
-https://velog.io/@productuidev/%EC%A4%80%EB%B9%84%ED%95%98%EA%B8%B0-7-%ED%8F%AC%ED%8A%B8%ED%8F%B4%EB%A6%AC%EC%98%A4-GitHub
-
-이걸 참고로 다시 정리하기
-
 # 구현 과정
 
 **POI 획득과 저장**
