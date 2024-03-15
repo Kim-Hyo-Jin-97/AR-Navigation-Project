@@ -354,11 +354,118 @@ OpenStreetMap에서는 확대 레벨이 1 오를 때마다 지도의 확대 수�
 
 제작하고자 했던 앱은 네비게이션이니만큼 당연히 지도를 받아오고 나서 자유롭게 화면을 드래그하거나 확대/축소할 수 있어야 한다고 생각했습니다. 그러나 유니티에서 Dynamic Map을 사용할 수 없었기에 저는 간단하게 사용자의 입력값이 주어지면 그만큼 지도를 입힌 RawImage의 Transform을 변경하는 방식으로 구현했습니다.
 
+<details>
+<summary>최초 코드</summary>
+<br>
+```
+/// <summary>
+/// 지도의 확대, 축소, 움직임을 담당하는 스크립트
+/// </summary>
+public class MapTransformManager : MonoBehaviour
+{
+    [Header("지도의 최소, 최대 확대 비율")]
+    [SerializeField] float minSize;
+    [SerializeField] float maxSize;
+    [Header("줌인,아웃, 스크롤링 속도")]
+    [SerializeField] float ZoomSpeed;
+    [SerializeField] float MoveSpeed;
 
+    [Header("지도")]
+    RawImage MapImage;
+
+
+    [Header("지도의 위치 계산용 벡터")]
+    Vector3 mapPosition;
+
+    [Header("터치 계산용 벡터")]
+    Vector2 nowPos, prePos;
+    Vector3 movePos;
+
+
+    void Awake()
+    {
+        MapImage = GetComponent<RawImage>();
+
+        mapPosition = Vector3.zero; //지도계산용 벡터 초기화
+    }
+
+
+    void Update()
+    {
+        TouchZoom();
+        TouchMove();
+    }
+
+    void TouchZoom()    //확대, 축소를 담당하는 메서드
+    {
+        if (Input.touchCount == 2) //손가락 2개가 눌렸을 때
+        {
+            Touch touchZero = Input.GetTouch(0); //첫번째 손가락 터치를 저장
+            Touch touchOne = Input.GetTouch(1); //두번째 손가락 터치를 저장
+
+            //터치에 대한 이전 위치값을 각각 저장
+            //처음 터치한 위치(touchZero.position)에서 이전 프레임에서의 터치 위치와 이번 프레임에서 터치 위치의 차이를 뺌
+            Vector2 touchZeroPrevPos = touchZero.position - touchZero.deltaPosition;
+            Vector2 touchOnePrevPos = touchOne.position - touchOne.deltaPosition;
+
+            // 각 프레임에서 터치 사이의 벡터 거리 구함
+            float prevTouchDeltaMag = (touchZeroPrevPos - touchOnePrevPos).magnitude;
+            float touchDeltaMag = (touchZero.position - touchOne.position).magnitude;
+
+            // 거리 차이 구함(거리가 이전보다 크면(마이너스가 나오면)손가락을 벌린 상태_줌인 상태)
+            float deltaMagnitudeDiff = prevTouchDeltaMag - touchDeltaMag;
+
+            Vector3 mapScale = MapImage.transform.localScale;   //지도의 현재 스케일을 저장
+
+            mapScale.x += -deltaMagnitudeDiff * ZoomSpeed * Time.deltaTime;
+            mapScale.y += -deltaMagnitudeDiff * ZoomSpeed * Time.deltaTime;
+            //지도의 스케일을 얼마나 바꿀 것인지 계산
+
+            float MapScaleX = Mathf.Clamp(mapScale.x, minSize, maxSize);
+            float MapScaleY = Mathf.Clamp(mapScale.x, minSize, maxSize);
+            //지도의 확대 수준을 제한
+
+            MapImage.transform.localScale = new Vector2(MapScaleX, MapScaleY);
+            //지도 크기 변경 적용
+        }
+    }
+
+    void TouchMove()    //지도의 움직임을 담당하는 메서드
+    {
+        if (Input.touchCount == 1)  //손가락 하나만 눌렀을 때
+        {
+            Touch touch = Input.GetTouch(0);    //터치 저장
+
+            if (touch.phase == TouchPhase.Began)    //터치를 막 시작했을 떄
+            {
+                prePos = touch.position - touch.deltaPosition;  //터치의 이전 위치값 저장
+            }
+            else if (touch.phase == TouchPhase.Moved)   //터치가 움직일 때
+            {
+                nowPos = touch.position - touch.deltaPosition;  //터치의 현재 위치값을 저장
+                movePos = (Vector3)(prePos - nowPos) * Time.deltaTime * MoveSpeed * MapImage.transform.localScale.x;
+                //얼마나 움직였는지를 이전위치-현재위치로 계산, 이후 움직임 속도와 지도의 스케일만큼 보정
+
+                MapImage.transform.Translate(movePos);  //지도를 움직인다.
+
+                prePos = touch.position - touch.deltaPosition;  //터치의 이전 위치값 저장
+            }
+
+
+        }
+
+    }
+}
+```
+</details>
+
+
+그러나 이 코드대로 동작시켜보았을 때 지도가 화면 밖으로 빠져나오거나, 지도를 드래그 한 상태에서 scale을 축소시 그만큼 Canvas의 빈 영역이 생기는 문제가 발생하였습니다.
+그래서 저는 이 문제를 해결하기 위해 지도RawImage의 앵커를 Canvas의 각 꼭짓점으로 설정하고, SCreen.width(height) *  rawImage의 scale.x(y)의 값을 받아  Mathf.clamp함수를 사용하여 rawImage의 anchoredPosition을 이 범위 내로 한정시키는 것으로 해결할 수 있었습니다.
 
 
 <details>
-<summary>개선코드</summary>
+<summary>개선 코드</summary>
 <br>
    
 ```
