@@ -1,6 +1,13 @@
 # AR-Navigation-Project(Station J)
 
-경기 인력개발원 유니티 부트캠프에서AR 네비게이션 제작 팀 프로젝트 [Statin J](https://github.com/Unity-Team-Unreal/AR-nav.git)
+경기 인력개발원 유니티 부트캠프에서AR 네비게이션 제작 팀 프로젝트 [Statin J](https://github.com/Unity-Team-Unreal/AR-nav.git) <br>
+개발 기간 2023.02.13 ~ 2023.02.29
+
+---
+
+# 목차
+
+-[1. 프로젝트 개요](#1. 프로젝트 개요)
 
 # 1. 프로젝트 개요
 
@@ -611,3 +618,6 @@ public class MapTransformManager : MonoBehaviour
 팀 프로젝트는 처음 진행해보았기 때문에 개인 프로젝트와 달리 각 팀원들이 유기적으로 소통하고, 업무 분담을 확실히 해야한다는 점이 부족하다고 생각했습니다.<br>
 
 예를 들어 POI데이터를 구현하는 과정에서 저와 별개로 다른 팀원 두명도 같은 작업을 하고 있었고, 이를 뒤늦게 깨달아 생산성을 저하시켰던 것이 못내 아쉬운 점으로 남아있습니다.<br>
+
+
+# 10. 마무리 및 소
