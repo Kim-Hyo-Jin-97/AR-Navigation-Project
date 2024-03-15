@@ -40,7 +40,6 @@ SI기업 '사람과 숲'과 협력하여 유니티를 이용해 인천시 재물
 <details>
 <summary>POI Info</summary>
 <br>
-   
 ```
 /// <summary>
 /// POI 데이터를 저장하는 컨테이너와 POI 데이터를 받아와서 컨테이너에 저장하는 스크립트
@@ -163,8 +162,6 @@ public class POI_Info : MonoBehaviour
 <summary>POI Info</summary>
 <br>
 ```
-   
-
 /// <summary>
 /// 네이버 지도 API를 사용하여 2D static 지도를 받아와 화면에 출력하는 스크립트
 /// </summary>
@@ -257,9 +254,9 @@ public class MapRequestManager : MonoBehaviour
 
 
 }
-
 ```
 </details>
+
 
 https://velog.io/@productuidev/%EC%A4%80%EB%B9%84%ED%95%98%EA%B8%B0-7-%ED%8F%AC%ED%8A%B8%ED%8F%B4%EB%A6%AC%EC%98%A4-GitHub
 
