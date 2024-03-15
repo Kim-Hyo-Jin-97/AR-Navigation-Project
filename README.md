@@ -36,7 +36,7 @@ SI기업 '사람과 숲'과 협력하여 유니티를 이용해 인천시 재물
  3. POI의 위치에 맞게 지도상의 위치에 마커를 띄운다.
 - 에서 사용한 API의 마커 기능을 활용할 계획입니다.
 
-# 5. 코드
+# 5. 핵심심 코드
 
 
 <details>
@@ -47,6 +47,7 @@ SI기업 '사람과 숲'과 협력하여 유니티를 이용해 인천시 재물
 /// <summary>
 /// POI 데이터를 저장하는 컨테이너와 POI 데이터를 받아와서 컨테이너에 저장하는 스크립트
 /// </summary>
+
 public struct POIData   //저장할 POI의 정보가 담긴 구조체
 
 {
@@ -307,7 +308,7 @@ public class MapRequestManager : MonoBehaviour
             if(GameObject.Find("Marker_" + poidata.Number()) == null)       //이 POI 마커가 아직 없다면
             {
                 Marker = Instantiate(Marker, point, quaternion.identity);   //point 위치에 마커를 생성한다.
-                MarkersbubbleState = Marker.GetComponent<BubbleState>();    //마커의 BubbleState 컴포넌트를 받아
+                MarkersbubbleState = Marker.GetComponent<BubbleState>();
                 MarkersbubbleState.thisData = poidata;                      //POI 데이터를 마커에 넣는다.
                 Marker.name = "Marker_" + poidata.Number();                 //마커의 이름을 설정한다.
                 Marker.transform.SetParent(GameObject.Find("StaticMapImage").transform, false);     //지도의 위치 변화에 따라갈 수 있도록 자식으로 넣는다.
@@ -343,3 +344,135 @@ OpenStreetMap에서는 확대 레벨이 1 오를 때마다 지도의 확대 수�
 
 1픽셀 당 실제 거리값을 구했으니 이제 마커가 기준점과 어디로, 얼마나 떨어져 있는지 구하면 됩니다. (기준점은 지도 중앙이며 사용자의 현 위치로 가정)
 이제 픽셀당 거리 * distance * 1000(distance 공식의 결과값 단위는 km고 픽셀당 거리는 m이기 때문입니다) 여기에 bearing으로 방향을 구한 뒤 곱해주면 POI가 가진 위도, 경도를 유니티 월드 좌표에 맞게 변환, 생성 수 있게 됩니다.
+
+
+# 7. 트러블 슈팅
+
+**7.1 지도의 확대와 움직임**
+
+제작하고자 했던 앱은 네비게이션이니만큼 당연히 지도를 받아오고 나서 자유롭게 화면을 드래그하거나 확대/축소할 수 있어야 한다고 생각했습니다. 그러나 유니티에서 Dynamic Map을 사용할 수 없었기에 저는 간단하게 사용자의 입력값이 주어지면 그만큼 지도를 입힌 RawImage의 Transform을 변경하는 방식으로 구현했습니다.
+
+
+
+
+<details>
+<summary>개선코드</summary>
+<br>
+   
+```
+/// <summary>
+/// 지도의 확대, 축소, 움직임을 담당하는 스크립트
+/// </summary>
+public class MapTransformManager : MonoBehaviour
+{
+    [Header("지도의 최소, 최대 확대 비율")]
+    [SerializeField] float minSize;
+    [SerializeField] float maxSize;
+    [Header("줌인,아웃, 스크롤링 속도")]
+    [SerializeField] float ZoomSpeed;
+    [SerializeField] float MoveSpeed;
+
+    [Header("지도")]
+    RawImage MapImage;
+
+
+    [Header("지도의 위치 계산용 벡터")]
+    Vector3 mapPosition;
+
+    [Header("터치 계산용 벡터")]
+    Vector2 nowPos, prePos;
+    Vector3 movePos;
+
+
+    void Awake()
+    {
+        MapImage = GetComponent<RawImage>();
+
+        mapPosition = Vector3.zero; //지도계산용 벡터 초기화
+    }
+
+
+    void Update()
+    {
+        TouchZoom();
+        TouchMove();
+    }
+
+    void TouchZoom()    //확대, 축소를 담당하는 메서드
+    {
+        if (Input.touchCount == 2) //손가락 2개가 눌렸을 때
+        {
+            Touch touchZero = Input.GetTouch(0); //첫번째 손가락 터치를 저장
+            Touch touchOne = Input.GetTouch(1); //두번째 손가락 터치를 저장
+
+            //터치에 대한 이전 위치값을 각각 저장
+            //처음 터치한 위치(touchZero.position)에서 이전 프레임에서의 터치 위치와 이번 프레임에서 터치 위치의 차이를 뺌
+            Vector2 touchZeroPrevPos = touchZero.position - touchZero.deltaPosition;
+            Vector2 touchOnePrevPos = touchOne.position - touchOne.deltaPosition;
+
+            // 각 프레임에서 터치 사이의 벡터 거리 구함
+            float prevTouchDeltaMag = (touchZeroPrevPos - touchOnePrevPos).magnitude;
+            float touchDeltaMag = (touchZero.position - touchOne.position).magnitude;
+
+            // 거리 차이 구함(거리가 이전보다 크면(마이너스가 나오면)손가락을 벌린 상태_줌인 상태)
+            float deltaMagnitudeDiff = prevTouchDeltaMag - touchDeltaMag;
+
+            Vector3 mapScale = MapImage.transform.localScale;   //지도의 현재 스케일을 저장
+            
+            mapScale.x += -deltaMagnitudeDiff * ZoomSpeed * Time.deltaTime;
+            mapScale.y += -deltaMagnitudeDiff * ZoomSpeed * Time.deltaTime;
+            //지도의 스케일을 얼마나 바꿀 것인지 계산
+
+            float MapScaleX = Mathf.Clamp(mapScale.x, minSize, maxSize);    
+            float MapScaleY = Mathf.Clamp(mapScale.x, minSize, maxSize); 
+            //지도의 확대 수준을 제한
+
+            MapImage.transform.localScale = new Vector2(MapScaleX, MapScaleY);
+            //지도 크기 변경 적용
+
+            DontOutMAP();   //지도 크기가 바뀌면서 캔버스를 벗어나지 않도록 조절
+        }
+    }
+
+    void TouchMove()    //지도의 움직임을 담당하는 메서드
+    {
+        if (Input.touchCount == 1)  //손가락 하나만 눌렀을 때
+        {
+            Touch touch = Input.GetTouch(0);    //터치 저장
+
+            if (touch.phase == TouchPhase.Began)    //터치를 막 시작했을 떄
+            {
+                prePos = touch.position - touch.deltaPosition;  //터치의 이전 위치값 저장
+            }
+            else if (touch.phase == TouchPhase.Moved)   //터치가 움직일 때
+            {
+                nowPos = touch.position - touch.deltaPosition;  //터치의 현재 위치값을 저장
+                movePos = (Vector3)(prePos - nowPos) * Time.deltaTime * MoveSpeed * MapImage.transform.localScale.x;
+                //얼마나 움직였는지를 이전위치-현재위치로 계산, 이후 움직임 속도와 지도의 스케일만큼 보정
+                MapImage.transform.Translate(movePos);  //지도를 움직인다.
+
+                prePos = touch.position - touch.deltaPosition;  //터치의 이전 위치값 저장
+            }
+            DontOutMAP();   //지도 크기가 바뀌면서 캔버스를 벗어나지 않도록 조절
+        }
+
+
+    }
+
+    void DontOutMAP()   //지도가 캔버스 밖을 벗어나지 않도록 제한하는 메서드
+    {
+        float x = (Screen.width / 2) * (transform.localScale.x - 1);
+        float y = (Screen.height / 2) * (transform.localScale.y - 1);
+        // 화면의 가로, 세로값의 절반에 지도의 스케일 값-1만큼 곱
+        // 지도가 담긴 캔버스의 앵커가 각 꼭지점에 있고, 지도의 피벗은 정중앙이다.
+
+        float MapPositionX = Mathf.Clamp(MapImage.rectTransform.anchoredPosition.x, -x, x);    //지도의 이동 제한
+
+        float MapPositionY = Mathf.Clamp(MapImage.rectTransform.anchoredPosition.y, -y, y);    //지도의 이동 제한
+
+        MapImage.rectTransform.anchoredPosition = new Vector2(MapPositionX, MapPositionY);  //지도의 앵커드 포지션을 설정
+
+    }
+}
+```
+</details>
