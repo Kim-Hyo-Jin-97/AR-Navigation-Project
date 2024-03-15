@@ -2,8 +2,7 @@
 
 경기 인력개발원 유니티 부트캠프에서AR 네비게이션 제작 팀 프로젝트
 
-(수정중, https://velog.io/@productuidev/%EC%A4%80%EB%B9%84%ED%95%98%EA%B8%B0-7-%ED%8F%AC%ED%8A%B8%ED%8F%B4%EB%A6%AC%EC%98%A4-GitHub 참고)
-
+https://github.com/Unity-Team-Unreal/AR-nav.git
 
 # 1. 프로젝트 개요
 
