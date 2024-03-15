@@ -357,6 +357,7 @@ OpenStreetMap에서는 확대 레벨이 1 오를 때마다 지도의 확대 수�
 <details>
 <summary>최초 코드</summary>
 <br>
+   
 ```
 /// <summary>
 /// 지도의 확대, 축소, 움직임을 담당하는 스크립트
@@ -374,8 +375,6 @@ public class MapTransformManager : MonoBehaviour
     RawImage MapImage;
 
 
-    [Header("지도의 위치 계산용 벡터")]
-    Vector3 mapPosition;
 
     [Header("터치 계산용 벡터")]
     Vector2 nowPos, prePos;
@@ -385,8 +384,6 @@ public class MapTransformManager : MonoBehaviour
     void Awake()
     {
         MapImage = GetComponent<RawImage>();
-
-        mapPosition = Vector3.zero; //지도계산용 벡터 초기화
     }
 
 
@@ -485,8 +482,6 @@ public class MapTransformManager : MonoBehaviour
     RawImage MapImage;
 
 
-    [Header("지도의 위치 계산용 벡터")]
-    Vector3 mapPosition;
 
     [Header("터치 계산용 벡터")]
     Vector2 nowPos, prePos;
@@ -496,8 +491,6 @@ public class MapTransformManager : MonoBehaviour
     void Awake()
     {
         MapImage = GetComponent<RawImage>();
-
-        mapPosition = Vector3.zero; //지도계산용 벡터 초기화
     }
 
 
