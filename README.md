@@ -37,8 +37,10 @@ SI기업 '사람과 숲'과 협력하여 유니티를 이용해 인천시 재물
 - 에서 사용한 API의 마커 기능을 활용할 계획입니다.
 
 # 코드
-
-## POI Info
+<details>
+<summary>POI Info</summary>
+<br>
+   
 ```
 /// <summary>
 /// POI 데이터를 저장하는 컨테이너와 POI 데이터를 받아와서 컨테이너에 저장하는 스크립트
@@ -153,6 +155,8 @@ public class POI_Info : MonoBehaviour
 
 }
 ```
+</details>
+ 
 
 
 https://velog.io/@productuidev/%EC%A4%80%EB%B9%84%ED%95%98%EA%B8%B0-7-%ED%8F%AC%ED%8A%B8%ED%8F%B4%EB%A6%AC%EC%98%A4-GitHub
